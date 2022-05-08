@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 require("./routes/movie.route")(app);
 
 app.listen(PORT, () => {
-  console.log(`move miscro service is running at port ${PORT}`);
+  console.log(`Movie miscro service is running at port ${PORT}`);
 });
 
 module.exports = app;
