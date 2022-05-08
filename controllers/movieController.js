@@ -44,4 +44,10 @@ async function getMovie ({user}) {
         }
       });
 }
-module.exports={check,createMovie,getMovie}
+
+async function deleteMovieBytitle ({titles}) {
+   return userMovies = await movie.deleteMany({
+      title:{'$in':titles}
+    });
+}
+module.exports={check,createMovie,getMovie,deleteMovieBytitle}

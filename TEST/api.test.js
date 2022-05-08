@@ -1,21 +1,28 @@
 
 const mongoose = require('mongoose');
-const axios = require('axios');
 const request = require('supertest');
 const app = require('../server');
 const mongoDbUrl = 'mongodb+srv://admin:admin@devconnector.tais8.mongodb.net/movie?retryWrites=true&w=majority';
-const {deleteMovieBytitle} = require('../controllers/movieController')
-
-const PREMIUM_USER = {
-  username: 'premium-jim',
-  password: 'GBLtTyq3E_UNjFnpo9m6'
-};
+const { deleteMovieBytitle } = require('../controllers/movieController')
 
 
 let token = '';
-let titles=[]
+let titles = []
+jest.mock('../middleware/auth', () => jest.fn((req, res, next) => {
+  req.user = {
+    "userId": 123,
+    "name": "Basic Thomas",
+    "role": "basic",
+    "iat": 1606221838,
+    "exp": 1606223638,
+    "iss": "https://www.netguru.com/",
+    "sub": "123"
+
+  }
+  next()
+}));
 describe('api tests for Premiumusers', () => {
-    jest.setTimeout(30000);
+  jest.setTimeout(30000);
   beforeAll(async () => {
     try {
       await mongoose.connect(mongoDbUrl, {
@@ -23,8 +30,6 @@ describe('api tests for Premiumusers', () => {
         useUnifiedTopology: true
       });
 
-      const authInfo = await axios.post('http://localhost:3000/auth', PREMIUM_USER);
-      token = authInfo.data.token;
     } catch (e) {
       console.log(e);
     }
@@ -34,7 +39,7 @@ describe('api tests for Premiumusers', () => {
   });
 
   afterAll(async () => {
-    await deleteMovieBytitle({titles})
+    await deleteMovieBytitle({ titles })
     await mongoose.connection.close();
   });
 
@@ -45,8 +50,8 @@ describe('api tests for Premiumusers', () => {
       .set({
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`
-      }).send({title:'race'});
-      titles.push('Race')
+      }).send({ title: 'race' });
+    titles.push('Race')
 
     expect(response.status).toBe(200);
   });
